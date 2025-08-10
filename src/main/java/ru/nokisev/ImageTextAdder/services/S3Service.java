@@ -1,27 +1,19 @@
 package ru.nokisev.ImageTextAdder.services;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Bucket;
 import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.File;
-import java.io.OutputStream;
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class S3Service {
 
@@ -49,14 +41,16 @@ public class S3Service {
         return allBuckets;
     }
 
-    String pattern = "yyyy.MM.dd.n";
-
-    public void saveFileToBucket(File file) {
+    public void saveFileToBucket(File file, Long id) {
         s3Client.putObject(PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(LocalDateTime.now().format(DateTimeFormatter.ofPattern(pattern)) + "_title")
+                .key(id.toString())
                 .build(), RequestBody.fromFile(file));
         System.out.println("Файл успешно загружен");
+    }
+
+    public String getImageLink(String id) {
+        return "https://bdc55126-63c8-4c3f-aa9a-1abaaadf1fba.selstorage.ru/" + id;
     }
 
 }

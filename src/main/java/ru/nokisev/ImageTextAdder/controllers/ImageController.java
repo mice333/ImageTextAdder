@@ -1,11 +1,9 @@
 package ru.nokisev.ImageTextAdder.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.nokisev.ImageTextAdder.model.ImageDetails;
 import ru.nokisev.ImageTextAdder.services.S3Service;
 
@@ -14,7 +12,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.time.LocalDate;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/image")
 public class ImageController {
@@ -24,6 +24,11 @@ public class ImageController {
 
     @PostMapping("/new")
     public ResponseEntity<?> saveImage(@RequestBody ImageDetails imageDetails) {
+
+
+        log.info("{}", imageDetails);
+
+        imageDetails.setCreatedAt(LocalDate.now().toString());
 
         try {
             // 1. Загружаем изображение
@@ -56,23 +61,25 @@ public class ImageController {
             // смещение вправо-вниз
             g2d.drawString(imageDetails.getCreatedAt(), 490, 400);  // смещение вправо-вниз
             g2d.setFont(new Font("Arial", Font.ITALIC, 24));
-            g2d.drawString(imageDetails.getDescription(), 25, 250);  // смещение вправо-вниз
-//            g2d.setFont(new Font("Arial", Font.ITALIC, 24));
-            g2d.drawString(imageDetails.getPriority(), 25, 175);
+            g2d.drawString(imageDetails.getDescription(), 25, 175);  // смещение вправо-вниз
+            g2d.drawString(imageDetails.getPriority(), 25, 250);
 
             // 8. Освобождаем ресурсы
             g2d.dispose();
 
             System.out.println(s3Service.returnAllBucketsResponse());
-
-            // 9. Сохраняем (лучше в PNG!)
             ImageIO.write(newImage, "png", new File("result.png"));
-            s3Service.saveFileToBucket(new File("result.png"));
+            s3Service.saveFileToBucket(new File("result.png"), imageDetails.getId());
 
             return ResponseEntity.ok("✅ Готово! Проверьте файл result.png");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("❌ Ошибка: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getImageLink(@PathVariable String id) {
+        return ResponseEntity.ok(s3Service.getImageLink(id));
     }
 
 }
