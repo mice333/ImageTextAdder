@@ -7,4 +7,4 @@
 - `/api/image/{id}` - выдаёт ссылку на изображение.
 
 ## Tech Stack
-![My Skills](https://skillicons.dev/icons?i=java,spring,aws&theme=light)
+![My Skills](https://skillicons.dev/icons?i=java,spring,aws,docker&theme=light)
