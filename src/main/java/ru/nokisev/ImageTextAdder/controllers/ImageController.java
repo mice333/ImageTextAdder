@@ -10,7 +10,7 @@ import ru.nokisev.ImageTextAdder.services.S3Service;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/image")
+@RequestMapping("/image")
 @RequiredArgsConstructor
 public class ImageController {
 
@@ -20,6 +20,7 @@ public class ImageController {
 
     @PostMapping("/new")
     public ResponseEntity<?> saveImage(@RequestBody ImageDetails imageDetails) {
+        log.info("Использован контроллер для создания изображения \"/image/new\"");
         try {
             imageService.saveImage(imageDetails);
             return ResponseEntity.status(201).body("✅ Готово! Проверьте файл result.png");
@@ -30,6 +31,7 @@ public class ImageController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getImageLink(@PathVariable String id) {
+        log.info("Использован контроллер для получения изображения \"/image/{}\"", id);
         return ResponseEntity.ok(s3Service.getImageLink(id));
     }
 
