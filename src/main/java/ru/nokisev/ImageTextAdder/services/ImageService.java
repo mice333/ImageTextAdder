@@ -11,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.time.LocalDate;
 
 @Slf4j
@@ -32,9 +31,7 @@ public class ImageService {
     private void imageSettings(ImageDetails imageDetails) throws IOException, FontFormatException {
         try {
             log.info("Изображение настраивается");
-            BufferedImage image = ImageIO.read(
-                    new URL("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Flag_of_Bundi.svg/680px-Flag_of_Bundi.svg.png") // 680x432
-            );
+            BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/static/images/background.png"));
 
             // 2. Создаём копию изображения с поддержкой RGB (на случай, если исходное в неправильном формате)
             BufferedImage newImage = new BufferedImage(
